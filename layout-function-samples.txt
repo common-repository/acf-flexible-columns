@@ -1,0 +1,68 @@
+<h2>Layout Function Examples</h2>
+
+<h4>Create your own Custom Blocks</h4>
+<p>Add a new layout within the Row width(s) you want it available within.  Then put a function similar to the following into your functions.php, matching your layout field name to the layout block you created in Advanced Custom Fields</p>
+<pre>
+function IDP_custom_layouts($type){
+	if( $type == 'custom_layout_name' ):
+		$field = get_sub_field('field_name');
+        $layout = $field;
+	endif;
+    return $layout;
+}
+add_filter( 'flexible_layout', 'IDP_custom_layouts');
+</pre>
+
+<h4>Column Wrappers</h4>
+<p>If you need to wrap each rows outer .container, use a function similar to below, this uses an option field called 'column_wrap' with 3 radio options of 'style1', 'style2', and 'end'
+<pre>
+add_filter( 'flexible_columns_wrap_outer', 'IDP_Column_WrapOuter');
+add_filter( 'flexible_columns_wrap_outer_end', 'IDP_Column_WrapOuter_End');
+function IDP_Column_WrapOuter(){
+	$wrap = get_sub_field('column_wrap');
+	if( $wrap == 'style1' ) $output = '<div class="wrap-style1">';
+	if( $wrap == 'style2' ) $output = '<div class="wrap-style2">';
+	return $output;	
+}
+function IDP_Column_WrapOuter_End(){
+	$wrap = get_sub_field('angled_background');
+	if( $wrap == 'end' || $wrap == 'style1' || $wrap == 'style2') $output = '</div> <!-- end .wrap-style -->';
+	return $output;	
+}
+</pre>
+<p>To wrap the inside the container use the following:</p>
+<pre>
+add_filter( 'flexible_columns_wrap_inner', 'IDP_Column_WrapInner');
+add_filter( 'flexible_columns_wrap_inner_end', 'IDP_Column_WrapInner_End');
+function IDP_Column_WrapOuter(){
+	$wrap = get_sub_field('column_wrap');
+	if( $wrap == 'style1' ) $output = '<div class="wrap-style1">';
+	if( $wrap == 'style2' ) $output = '<div class="wrap-style2">';
+	return $output;	
+}
+function IDP_Column_WrapOuter_End(){
+	$wrap = get_sub_field('angled_background');
+	if( $wrap == 'end' || $wrap == 'style1' || $wrap == 'style2') $output = '</div> <!-- end .wrap-style -->';
+	return $output;	
+}
+</pre>
+<h4>Class Modifiers/Extendors</h4>
+<p>If you need to modify or add additional classes to the column div use this filter:</p>
+<pre>
+function idp_ColClasses($classes, $therow){
+	global $post;
+	$showborder = $therow['enable_border'];
+	if( $showborder ) $classes[] = 'border';
+	return $classes;
+}
+add_filter( 'flexible_columns_col_class', 'idp_ColClasses', 10, 2);
+</pre>
+<p>To modify/add classes to the row div:</p>
+<pre>
+function idp_RowClass($class){
+	$newclass = 'rowbackground';
+	$class[] = $newclass;
+	return $class;
+}
+add_filter( 'flexible_columns_row_class', 'idp_RowClass');
+</pre>
